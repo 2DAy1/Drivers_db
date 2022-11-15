@@ -1,0 +1,39 @@
+parameters:
+  - name: format
+    in: query
+    type: string
+    enum: ['json','xml']
+    required: true
+    default: json
+  - name: order
+    in: query
+    type: string
+    enum: ['desc','ask']
+    default: desc
+definitions:
+  Driver:
+    type: object
+    properties:
+      driver_code:
+        type: string
+        example: SVF
+      number:
+        type: string
+        example: 1
+      name:
+        type: string
+        example: Sebastian Vettel
+      company:
+        type: string
+        example: FERRARI
+      result:
+        type: string
+        example: 01:04.415
+responses:
+  200:
+    description: A list of Drivers
+    content:
+      schema:
+        $ref: '#/definitions/Driver'
+
+
