@@ -1,8 +1,9 @@
 from peewee import *
-from pathlib import Path
+from flask import current_app
 
 
-db = SqliteDatabase('db/drivers.db')
+def connect_db(path=current_app.config["DATABASE"]):
+    return SqliteDatabase(path)
 
 
 class Driver(Model):
@@ -13,7 +14,6 @@ class Driver(Model):
     result = CharField()
 
     class Meta:
-        database = db
+        database = connect_db()
         order_by = "id"
         db_table = 'drivers'
-
