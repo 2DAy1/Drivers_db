@@ -2,23 +2,19 @@ import json
 
 from flask import jsonify, make_response, config, current_app, Blueprint
 from flask_restful import Resource, request
-from models import connect_db, Driver
+from models import database, Driver
 from dicttoxml import dicttoxml
 from flasgger import swag_from
-import collections
-
-collections.Iterable = collections.abc.Iterable
 
 
 def get_drivers(order):
-    db = connect_db()
-
-    with db:
-        database = Driver.select().order_by(Driver.id)
-        if order == 'ask':
-            database = Driver.select().order_by(Driver.id[::-1])
+    with database:
+        if order == 'desc':
+            db = Driver.select().order_by(Driver.id)
+        elif order == 'ask':
+            db = Driver.select().order_by(Driver.id[::-1])
         drivers = {}
-        for driver in database[:-1]:
+        for driver in db:
             drivers[driver.code] = [driver.id, driver.name, driver.company, driver.result]
     return drivers
 

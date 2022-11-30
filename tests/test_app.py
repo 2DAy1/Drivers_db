@@ -21,4 +21,13 @@ class TestViews:
         assert response_ask.json == response_desc.json[::-1]
 
 
-
+        # r_format = ["json", "xml", ""]
+        # r_order = ["desc", "ask", ""]
+        # data = []
+        # for i in r_format:
+        #     for j in r_order:
+        #         data.append({"format": i, "order": j})
+        #
+        # for i in data:
+        #     response = client.get(url, params=i)
+        #     assert response.status_code == 200

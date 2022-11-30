@@ -1,13 +1,10 @@
-import argparse
-from flask import current_app
-from models import connect_db, Driver
+import sqlite3
+from flask import Flask, g, current_app
+from models import *
 from report_of_monaco_2018_racing_dan import report
 
 
-
-
-
-def get_drivers(path=None):
+def get_drivers_dict(path):
     drivers = {}
     for driver in report.create_drivers(path):
         drivers[driver.code] = {
@@ -23,30 +20,33 @@ def get_drivers(path=None):
     return drivers
 
 
-def create_db(folder, database):
+def get_driver_list(folder):
+    drivers_dict = get_drivers_dict(folder)
+    drivers_list = []
+    for code in drivers_dict:
+        driver = drivers_dict[code]
+        driver = dict(code=code,
+                      name=driver['name'],
+                      company=driver['company'],
+                      result=driver['result'])
+        drivers_list.append(driver)
 
-    db = connect_db(database)
-    with db:
-        db.create_tables([Driver])
 
-        drivers_dict = get_drivers(folder)
-
-        drivers_list = []
-        for code in drivers_dict:
-            driver = drivers_dict[code]
-            driver = dict(code=code,
-                          name=driver['name'],
-                          company=driver['company'],
-                          result=driver['result'])
-            drivers_list.append(driver)
-        Driver.insert_many(drivers_list).execute()
-
-    return db
-
+def create_db(data, folder):
+    init_db(data)
+    with database:
+        database.create_tables([Driver])
+        with database.atomic():
+            Driver.bulk_create(get_driver_list(folder)).execute()
 
 
 
 
 
-# def get_db():
-#     if not hasattr()
+
+
+
+
+
+
+
